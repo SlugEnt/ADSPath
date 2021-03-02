@@ -146,7 +146,7 @@ namespace Test_ADSPath
 		[Test]
 		public void GetChildADSPath (string path, string child, string expected) {
 			ADSPath adsPath = new ADSPath(path);
-			ADSPath childAdsPath = adsPath.GetChild(child);
+			ADSPath childAdsPath = adsPath.NewChildADSPath(child);
 			Assert.AreEqual(expected,childAdsPath.Path,"A10: ");
 		}
 
@@ -158,6 +158,17 @@ namespace Test_ADSPath
 			ADSPath adsPath = new ADSPath(path);
 
 			Assert.AreEqual(path, adsPath.ToString(),"A10:");
+		}
+
+
+
+		[TestCase("cn=scott,ou=people,dc=some,dc=local", "people")]
+		[TestCase("ou=people,ou=us,ou=North America,dc=some,dc=local", "people")]
+		//[TestCase()]
+		[Test]
+		public void ShortName (string path, string expected) {
+			ADSPath adsPath = new ADSPath(path);
+			Assert.AreEqual(expected,adsPath.ShortName(),"A10: ");
 		}
 	}
 
