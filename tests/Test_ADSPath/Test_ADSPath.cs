@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using NUnit.Framework.Internal;
 using SlugEnt;
 
 namespace Test_ADSPath
@@ -169,6 +170,17 @@ namespace Test_ADSPath
 		public void ShortName (string path, string expected) {
 			ADSPath adsPath = new ADSPath(path);
 			Assert.AreEqual(expected,adsPath.ShortName(),"A10: ");
+		}
+
+		[TestCase("LDAP://server.some.local:65000/cn=mary smith,OU=people,dc=some,dc=local", "mary smith")]
+		[TestCase("cn=scott,ou=people,dc=some,dc=local", "scott")]
+		[TestCase("cn=scott,ou=people", "scott")]
+		[TestCase("cn=scott", "scott")]
+		[TestCase("ou=people,ou=us,ou=North America,dc=some,dc=local", "")]
+		[Test]
+		public void FindCN (string path, string expected) {
+			string cn = ADSPath.FindCN(path);
+			Assert.AreEqual(expected,cn,"A10: ");
 		}
 	}
 

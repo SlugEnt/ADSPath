@@ -146,13 +146,13 @@ namespace SlugEnt
 		/// </summary>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		internal int IndexOfNextMarker (string value, int startingPositon = 0) {
+		internal static int IndexOfNextMarker (string value, int startingPositon = 0) {
 			string[] markers = new[] { ",ou=", ",cn=", ",o=" };
 			int index = -1;
 
 			foreach (string marker in markers)
 			{
-				index = DN.ToLower().IndexOf(marker,startingPositon);
+				index = value.IndexOf(marker,startingPositon);
 				if (index > -1) break;
 			}
 
@@ -258,8 +258,9 @@ namespace SlugEnt
 			string dnLC = DN.ToLower();
 			int start = -1;
 			if ( dnLC.StartsWith("cn=") ) {
+				// TODO - Should also check for O=
 				start = dnLC.IndexOf(",ou=");
-				if ( start == -1 ) start = dnLC.IndexOf(",dc=");
+				//if ( start == -1 ) start = dnLC.IndexOf(",dc=");
 				if ( start > 0 )
 					childDN = DN.Substring(start);
 				else {
@@ -288,11 +289,11 @@ namespace SlugEnt
 		/// <summary>
 		/// Builds a Complete ADSPath from the 3 provided elements.
 		/// </summary>
-		/// <param name="prefix"></param>
-		/// <param name="dn"></param>
-		/// <param name="suffix"></param>
-		/// <returns></returns>
-		internal string BuildFullPath (string prefix, string dn, string suffix) {
+		/// <param name="prefix">A Proper ADSPath Prefix</param>
+		/// <param name="dn">The Distinguished Name part of path</param>
+		/// <param name="suffix">A Proper ADSPath Suffix</param>
+		/// <returns></returns> 
+		public static string BuildFullPath (string prefix, string dn, string suffix) {
 			bool suffixEmpty = suffix == string.Empty ? true : false;
 			bool dnEmpty = dn == string.Empty ? true : false;
 			bool prefixEmpty = prefix == string.Empty ? true : false;
@@ -331,6 +332,25 @@ namespace SlugEnt
 		/// <returns></returns>
 		public string BuildFullPath () {
 			return BuildFullPath(Prefix, DN, Suffix);
+		}
+
+
+		public static string FindCN (string path) {
+			string toLower = path.ToLower();
+			int start = 3;
+			if ( ! toLower.StartsWith("cn=") ) {
+				start = toLower.IndexOf("/cn=");
+				if ( start > 0 )
+					start = start + 4;
+				else
+					return "";
+
+			}
+
+			int end = IndexOfNextMarker(toLower, 1);
+			if ( end == -1 ) end = path.Length;
+
+			return path.Substring(start, (end - start));
 		}
 
 
