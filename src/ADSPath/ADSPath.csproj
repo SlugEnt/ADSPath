@@ -5,6 +5,21 @@
     <AssemblyVersion>1.0.0.52</AssemblyVersion>
     <AssemblyName>SlugEnt.ADSPath</AssemblyName>
     <RootNamespace>SlugEnt</RootNamespace>
+    <Authors>Scott Herrmann</Authors>
+    <Company>SlugEnt</Company>
+    <Product>ADSPath</Product>
+    <Description>Provides ability to manipulate a Microsoft Active Directory ADSPath</Description>
+    <Copyright>Scott Herrmann 2021</Copyright>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/SlugEnt/ADSPath</PackageProjectUrl>
+    <PackageTags>Active Directory</PackageTags>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
 
 </Project>
