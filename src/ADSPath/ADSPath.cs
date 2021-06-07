@@ -141,13 +141,31 @@ namespace SlugEnt
 		}
 
 
+		/// <summary>
+		/// Returns the position within the value of the next RDN.
+		/// </summary>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		internal static int IndexOfNextMarker (string value, int startingPositon = 0) {
+			string[] markers = new[] { ",ou=", ",cn=", ",o=" };
+			int index = -1;
+
+			foreach (string marker in markers)
+			{
+				index = value.IndexOf(marker,startingPositon);
+				if (index > -1) break;
+			}
+
+			return index;
+		}
+
 
 		/// <summary>
 		/// Returns the parent Distinguished Name
 		/// </summary>
 		/// <returns></returns>
 		internal string GetParentDN () {
-			string [] markers = new [] {",ou=", ",cn=", ",o="};
+			/*string [] markers = new [] {",ou=", ",cn=", ",o="};
 			int start = -1;
 			foreach ( string marker in markers ) {
 				start = DN.ToLower().IndexOf(marker);
@@ -155,10 +173,55 @@ namespace SlugEnt
 			}
 
 			if ( start == -1 ) return string.Empty;
+			*/
 
+			int start = IndexOfNextMarker(DN.ToLower());
+			if (start == -1) return string.Empty;
 			// Skip Comma
 			start++;
 			return DN.Substring(start);
+		}
+
+
+		/// <summary>
+		/// Returns the name portion only of the left most RDN. So in OU=Tampa,OU=Florida,dc=some,dc=local, it would return Tampa.
+		/// </summary>
+		/// <returns></returns>
+		public string ShortName () {
+			if ( DN == string.Empty ) return "";
+
+			
+			// TODO THERE is a BETTER WAY, we just need to find the start and end indexes, way less string copying
+			int realStartIndex = 0;
+
+			string subDN = DN.ToLower();
+			
+			// Does it start with a CN=?  If so we drop that.
+			if ( subDN.StartsWith("cn=") ) {
+				realStartIndex =  IndexOfNextMarker(subDN);
+
+				// This should never happen
+				if (realStartIndex == -1) throw new ApplicationException("Trying to remove CN=, Could not find the next RDN marker in the path - " + subDN);
+			}
+
+			// Find the first = after the RealStarting Index (ie, bypassing the cn=
+			int nameStartIndex = DN.IndexOf('=',realStartIndex);
+			if ( nameStartIndex == -1 ) 
+				throw new ApplicationException("ShortName:  Error locating the start of the name."); 
+
+			// Find the next marker
+			int endingIndex = IndexOfNextMarker(subDN,nameStartIndex);
+			int start = nameStartIndex + 1;
+			int length = 0;
+			string name;
+			if ( endingIndex != -1 ) {
+				length = endingIndex - start;
+				name = DN.Substring(start, length);
+			}
+			else 
+				name =  DN.Substring(start);
+			
+			return name;
 		}
 
 
@@ -176,11 +239,12 @@ namespace SlugEnt
 
 
 		/// <summary>
-		/// Creates a child container of the current container.  The CN will be dropped.  
+		/// Builds a new ADSPath child container that has a parent of the current container.  The CN will be dropped of the current path name.
+		/// <para>Example:  Current Path = LDAP://ou=office,dc=some,dc=local   New Child LDAP://ou=New Jersey,ou=office,dc=some,dc=local</para>
 		/// </summary>
 		/// <param name="childPart">The child container of the current object.  In format:  OU=child or OU=grandchild,OU=child</param>
 		/// <returns></returns>
-		public ADSPath GetChild (string childPart) {
+		public ADSPath NewChildADSPath (string childPart) {
 			// Validate the childPart
 			string childPartLC = childPart.ToLower();
 			if (! (childPartLC.StartsWith("ou=") || childPartLC.StartsWith("o=")))
@@ -194,8 +258,9 @@ namespace SlugEnt
 			string dnLC = DN.ToLower();
 			int start = -1;
 			if ( dnLC.StartsWith("cn=") ) {
+				// TODO - Should also check for O=
 				start = dnLC.IndexOf(",ou=");
-				if ( start == -1 ) start = dnLC.IndexOf(",dc=");
+				//if ( start == -1 ) start = dnLC.IndexOf(",dc=");
 				if ( start > 0 )
 					childDN = DN.Substring(start);
 				else {
@@ -224,11 +289,11 @@ namespace SlugEnt
 		/// <summary>
 		/// Builds a Complete ADSPath from the 3 provided elements.
 		/// </summary>
-		/// <param name="prefix"></param>
-		/// <param name="dn"></param>
-		/// <param name="suffix"></param>
-		/// <returns></returns>
-		internal string BuildFullPath (string prefix, string dn, string suffix) {
+		/// <param name="prefix">A Proper ADSPath Prefix</param>
+		/// <param name="dn">The Distinguished Name part of path</param>
+		/// <param name="suffix">A Proper ADSPath Suffix</param>
+		/// <returns></returns> 
+		public static string BuildFullPath (string prefix, string dn, string suffix) {
 			bool suffixEmpty = suffix == string.Empty ? true : false;
 			bool dnEmpty = dn == string.Empty ? true : false;
 			bool prefixEmpty = prefix == string.Empty ? true : false;
@@ -267,6 +332,25 @@ namespace SlugEnt
 		/// <returns></returns>
 		public string BuildFullPath () {
 			return BuildFullPath(Prefix, DN, Suffix);
+		}
+
+
+		public static string FindCN (string path) {
+			string toLower = path.ToLower();
+			int start = 3;
+			if ( ! toLower.StartsWith("cn=") ) {
+				start = toLower.IndexOf("/cn=");
+				if ( start > 0 )
+					start = start + 4;
+				else
+					return "";
+
+			}
+
+			int end = IndexOfNextMarker(toLower, 1);
+			if ( end == -1 ) end = path.Length;
+
+			return path.Substring(start, (end - start));
 		}
 
 

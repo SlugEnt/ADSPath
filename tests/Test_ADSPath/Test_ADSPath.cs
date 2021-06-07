@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using NUnit.Framework.Internal;
 using SlugEnt;
 
 namespace Test_ADSPath
@@ -146,7 +147,7 @@ namespace Test_ADSPath
 		[Test]
 		public void GetChildADSPath (string path, string child, string expected) {
 			ADSPath adsPath = new ADSPath(path);
-			ADSPath childAdsPath = adsPath.GetChild(child);
+			ADSPath childAdsPath = adsPath.NewChildADSPath(child);
 			Assert.AreEqual(expected,childAdsPath.Path,"A10: ");
 		}
 
@@ -158,6 +159,28 @@ namespace Test_ADSPath
 			ADSPath adsPath = new ADSPath(path);
 
 			Assert.AreEqual(path, adsPath.ToString(),"A10:");
+		}
+
+
+
+		[TestCase("cn=scott,ou=people,dc=some,dc=local", "people")]
+		[TestCase("ou=people,ou=us,ou=North America,dc=some,dc=local", "people")]
+		//[TestCase()]
+		[Test]
+		public void ShortName (string path, string expected) {
+			ADSPath adsPath = new ADSPath(path);
+			Assert.AreEqual(expected,adsPath.ShortName(),"A10: ");
+		}
+
+		[TestCase("LDAP://server.some.local:65000/cn=mary smith,OU=people,dc=some,dc=local", "mary smith")]
+		[TestCase("cn=scott,ou=people,dc=some,dc=local", "scott")]
+		[TestCase("cn=scott,ou=people", "scott")]
+		[TestCase("cn=scott", "scott")]
+		[TestCase("ou=people,ou=us,ou=North America,dc=some,dc=local", "")]
+		[Test]
+		public void FindCN (string path, string expected) {
+			string cn = ADSPath.FindCN(path);
+			Assert.AreEqual(expected,cn,"A10: ");
 		}
 	}
 
