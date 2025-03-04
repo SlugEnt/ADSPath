@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net9</TargetFramework>
-    <AssemblyVersion>1.1.0.0</AssemblyVersion>
-    <AssemblyName>SlugEnt.ADSPath</AssemblyName>
+    <AssemblyVersion>1.1.2.0</AssemblyVersion>
+    <AssemblyName>SlugEnt.IS.ADSPath</AssemblyName>
     <RootNamespace>SlugEnt</RootNamespace>
     <Authors>Scott Herrmann</Authors>
     <Company>SlugEnt</Company>
@@ -16,12 +16,13 @@
     <Title>Modern Program.cs startup assistance library</Title>
     <RepositoryUrl>https://github.com/ScottHerrmannSH/ICS.AppRun</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageReleaseNotes>UpgrEDD aded to Net9</PackageReleaseNotes>
+    <PackageReleaseNotes>Upgraded to Net9.  Minor method additions.</PackageReleaseNotes>
 	  <Nullable>enable</Nullable>
 	  <IncludeSymbols>True</IncludeSymbols>
 	  <SymbolPackageFormat>snupkg</SymbolPackageFormat>
 	  <NeutralLanguage>en-US</NeutralLanguage>
 	  <SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
+	  <Version>1.1.2.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

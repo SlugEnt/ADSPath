@@ -1,13 +1,13 @@
 Echo Creates Release Packages
 
-set project=IS.AppRun
+set project=ADSPath
 set packages="..\packages\release"
 
-# Preliminary Stuff
-# Setup Nuget
+REM # Preliminary Stuff
+REM # Setup Nuget
 nuget setapikey %NuGetApiKey% -source %NuGetSrc%
 
-## Create Packages Directory.
+REM ## Create Packages Directory.
 if not exist ..\%packages% (
   mkdir ..\Packages
   mkdir ..\Packages\Release
