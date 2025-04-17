@@ -193,6 +193,19 @@ public class Test_ADSPath
     }
 
 
+    [TestCase("DC=some,DC=local", "CN=animals", "CN=animals,DC=some,DC=local")]
+    [TestCase("CN=WaterPets,DC=some,DC=local", "CN=animals", "CN=animals,CN=WaterPets,DC=some,DC=local")]
+    [Test]
+    public void NewChildCNStyle(string parent,
+                         string child,
+                         string expected)
+    {
+        ADSPath adsPath   = new(parent);
+        ADSPath childPath = adsPath.NewChildADSPath(child,false);
+        Assert.AreEqual(expected, childPath.Path, "A10: ");
+    }
+
+
     [SetUp]
     public void Setup() { }
 

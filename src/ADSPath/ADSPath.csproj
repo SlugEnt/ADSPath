@@ -2,18 +2,18 @@
 
   <PropertyGroup>
     <TargetFramework>net9</TargetFramework>
-    <AssemblyVersion>1.1.2.0</AssemblyVersion>
+    <AssemblyVersion>1.2.0.0</AssemblyVersion>
     <AssemblyName>SlugEnt.IS.ADSPath</AssemblyName>
     <RootNamespace>SlugEnt</RootNamespace>
     <Authors>Scott Herrmann</Authors>
     <Company>SlugEnt</Company>
     <Product>ADSPath</Product>
     <PackageTags>Active Directory</PackageTags>
-    <Description>Provides LDAP / AD stye manipulation of Distinguished names.</Description>
+    <Description>Provides LDAP / AD stye manipulation of Distinguished names and folder paths</Description>
     <Copyright>2025</Copyright>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Title>Modern Program.cs startup assistance library</Title>
+    <Title>Provides some simplistic Active Directory Folder Navigation</Title>
     <RepositoryUrl>https://github.com/ScottHerrmannSH/ICS.AppRun</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageReleaseNotes>Upgraded to Net9.  Minor method additions.</PackageReleaseNotes>
@@ -21,8 +21,10 @@
 	  <IncludeSymbols>True</IncludeSymbols>
 	  <SymbolPackageFormat>snupkg</SymbolPackageFormat>
 	  <NeutralLanguage>en-US</NeutralLanguage>
+	  <InvariantGlobalization>false</InvariantGlobalization>
 	  <SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
-	  <Version>1.1.2.0</Version>
+	  <GenerateDocumentationFile>True</GenerateDocumentationFile>
+	  <Version>1.2.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

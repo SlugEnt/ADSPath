@@ -324,8 +324,13 @@ public class ADSPath
     /// </summary>
     /// <param name="childPart">The child container of the current object.  In format:  OU=child or OU=grandchild,OU=child</param>
     /// <returns></returns>
-    public ADSPath NewChildADSPath(string childPart)
+    public ADSPath NewChildADSPath(string childPart, bool isOuPath = true)
     {
+        // If the Path is not an OU path, then we need to use the CN= part of the path.
+        if (!isOuPath)
+            return NewChildADSPathCN(childPart);
+
+
         // Validate the childPart
         string childPartLC = childPart.ToLower();
         if (!(childPartLC.StartsWith("ou=") || childPartLC.StartsWith("o=")))
@@ -370,6 +375,38 @@ public class ADSPath
         return childADSPath;
     }
 
+
+    private ADSPath NewChildADSPathCN(string childPart)
+    {
+        // Validate the childPart
+        string childPartLC = childPart.ToLower();
+        if (!(childPartLC.StartsWith("cn=")))
+            throw new ArgumentException("Invalid ChildPart.  Child part must start with CN=.");
+
+        if (childPartLC.EndsWith(","))
+            childPart = childPart.TrimEnd(',');
+
+
+        // Need to strip leading CN= off.
+        string childDN = "";
+        string dnLC    = DN.ToLower();
+        int    start   = -1;
+            childDN = DN;
+
+        if (childDN.Length == 0)
+            childDN = childPart;
+        else if (childDN.StartsWith(","))
+            childDN = childPart + childDN;
+        else
+            childDN = childPart + "," + childDN;
+
+
+        //			string childDN = childPart + "," + DN;
+
+        string  childPath    = BuildFullPath(Prefix, childDN, Suffix);
+        ADSPath childADSPath = new(childPath);
+        return childADSPath;
+    }
 
     /// <summary>
     ///     Returns the name portion only of the left most RDN. So in OU=Tampa,OU=Florida,dc=some,dc=local, it would return
